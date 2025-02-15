@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using BepInEx;
 using GorillaLocomotion;
 using MiniMod;
@@ -50,8 +51,10 @@ namespace MiniInModded
             SceneManager.LoadScene("Basement", LoadSceneMode.Additive);
             SceneManager.sceneLoaded += OnSceneLoaded;
             GameObject.Find("TinySizerEntrance(Clone)").SetActive(true);
-        }
 
+            // Start the coroutine to unload Basement after a delay
+            StartCoroutine(UnloadBasementAfterDelay(5f)); // 5 seconds delay
+        }
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             if (scene.name == "Basement" && NetworkSystem.Instance.GameModeString.Contains("MODDED"))
@@ -72,11 +75,7 @@ namespace MiniInModded
                     {
                         Debug.LogError("tse not found haha");
                     }
-                    GameObject basementMusic = GameObject.Find("Basement/DungeonRoomAnchor/DungeonBasement/BasementMusicSpeaker");
-                    if (basementMusic != null)
-                    {
-                        basementMusic.SetActive(false);
-                    }
+                    GameObject.Find("Basement/DungeonRoomAnchor/DungeonBasement/BasementMusicSpeaker").SetActive(false);
                     RemoveAnnoyingAmbience();
             }
         }
@@ -84,16 +83,9 @@ namespace MiniInModded
         [ModdedGamemodeLeave]
         public void OnLeave(string gamemode)
         {
-            SetPlayerPosition();
             GameObject.Find("TinySizerEntrance(Clone)").SetActive(false);
             inRoom = false;
         }
-
-        private void SetPlayerPosition()
-        {
-            Player.Instance.transform.position = new Vector3(-68.5887f, 12.0883f, -83.958f);
-        }
-
         private void RemoveAnnoyingAmbience()
         {
             GameObject crickets = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/Environment/WeatherDayNight/AudioCrickets");
@@ -102,11 +94,12 @@ namespace MiniInModded
                 crickets.SetActive(false);
             }
 
-            GameObject rain = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/Environment/WeatherDayNight/rain");
-            if (rain != null)
-            {
-                rain.SetActive(false);
-            }
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/Environment/WeatherDayNight/rain").SetActive(false);
+        }
+        private IEnumerator UnloadBasementAfterDelay(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            SceneManager.UnloadSceneAsync("Basement");
         }
     }
 }
