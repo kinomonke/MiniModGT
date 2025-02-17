@@ -12,7 +12,7 @@ namespace MiniInModded
 {
     [ModdedGamemode]
     [BepInDependency("org.legoandmars.gorillatag.utilla", "1.5.0")]
-    [BepInPlugin("com.kino.gorillatag.miniinmodded", "MiniInModded", "1.0.0")]
+    [BepInPlugin("com.kino.gorillatag.miniinmodded", "MiniInModded", "1.0.3")]
     public class Plugin : BaseUnityPlugin
     {
         private GameObject TinySizerENT;
