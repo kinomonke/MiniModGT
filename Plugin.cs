@@ -51,9 +51,7 @@ namespace MiniInModded
             SceneManager.LoadScene("Basement", LoadSceneMode.Additive);
             SceneManager.sceneLoaded += OnSceneLoaded;
             GameObject.Find("TinySizerEntrance(Clone)").SetActive(true);
-
-            // Start the coroutine to unload Basement after a delay
-            StartCoroutine(UnloadBasementAfterDelay(5f)); // 5 seconds delay
+            StartCoroutine(UnloadBasementAfterDelay(5f));
         }
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
@@ -73,7 +71,7 @@ namespace MiniInModded
 
                     else
                     {
-                        Debug.LogError("tse not found haha");
+                        Debug.LogError("i did smthn wrong");
                     }
                     GameObject.Find("Basement/DungeonRoomAnchor/DungeonBasement/BasementMusicSpeaker").SetActive(false);
                     RemoveAnnoyingAmbience();
