@@ -1,8 +1,6 @@
-﻿using System;
+using System;
 using System.Collections;
 using BepInEx;
-using GorillaLocomotion;
-using MiniMod;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Utilla;
@@ -12,10 +10,10 @@ namespace MiniInModded
 {
     [ModdedGamemode]
     [BepInDependency("org.legoandmars.gorillatag.utilla", "1.5.0")]
-    [BepInPlugin("com.kino.gorillatag.miniinmodded", "MiniInModded", "1.0.2")]
+    [BepInPlugin("com.kino.gorillatag.miniinmodded", "MiniInModded", "1.0.4")]
     public class Plugin : BaseUnityPlugin
     {
-        private GameObject TinySizerENT;
+        private GameObject TinyTrigger;
         private bool inRoom;
         private GameObject clonedObject;
 
@@ -39,11 +37,6 @@ namespace MiniInModded
 
         }
 
-        private void Update()
-        {
-
-        }
-
         [ModdedGamemodeJoin]
         public void OnJoin(string gamemode)
         {
@@ -51,30 +44,26 @@ namespace MiniInModded
             SceneManager.LoadScene("Basement", LoadSceneMode.Additive);
             SceneManager.sceneLoaded += OnSceneLoaded;
             GameObject.Find("TinySizerEntrance(Clone)").SetActive(true);
-            StartCoroutine(UnloadBasementAfterDelay(5f));
         }
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             if (scene.name == "Basement" && NetworkSystem.Instance.GameModeString.Contains("MODDED"))
             {
-                    SceneManager.sceneLoaded -= OnSceneLoaded;
+                SceneManager.sceneLoaded -= OnSceneLoaded;
 
-                    TinySizerENT = GameObject.Find("Basement/DungeonRoomAnchor/DungeonBasement/MazeSizeChangers/TinySizerEntrance");
-                    if (TinySizerENT != null)
+                TinyTrigger = GameObject.Find("Basement/DungeonRoomAnchor/DungeonBasement/MazeSizeChangers/TinySizerEntrance");
+                if (TinyTrigger != null)
+                {
+                    TinyTrigger.transform.localScale = new Vector3(9999f, 9999f, 9999f);
+                    if (clonedObject == null)
                     {
-                        TinySizerENT.transform.localScale = new Vector3(9999f, 9999f, 9999f);
-                        if (clonedObject == null)
-                        {
-                            clonedObject = Instantiate(TinySizerENT, new Vector3(0, 0, 0), Quaternion.identity);
-                        }
+                        clonedObject = Instantiate(TinyTrigger, new Vector3(0, 0, 0), Quaternion.identity);
                     }
-
-                    else
-                    {
-                        Debug.LogError("i did smthn wrong");
-                    }
-                    GameObject.Find("Basement/DungeonRoomAnchor/DungeonBasement/BasementMusicSpeaker").SetActive(false);
-                    RemoveAnnoyingAmbience();
+                }
+                else
+                {
+                    Debug.LogError("i did smthn wrong");
+                }
             }
         }
 
@@ -83,21 +72,6 @@ namespace MiniInModded
         {
             GameObject.Find("TinySizerEntrance(Clone)").SetActive(false);
             inRoom = false;
-        }
-        private void RemoveAnnoyingAmbience()
-        {
-            GameObject crickets = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/Environment/WeatherDayNight/AudioCrickets");
-            if (crickets != null)
-            {
-                crickets.SetActive(false);
-            }
-
-            GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/Environment/WeatherDayNight/rain").SetActive(false);
-        }
-        private IEnumerator UnloadBasementAfterDelay(float delay)
-        {
-            yield return new WaitForSeconds(delay);
-            SceneManager.UnloadSceneAsync("Basement");
         }
     }
 }
