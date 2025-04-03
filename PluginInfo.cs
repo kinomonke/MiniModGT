@@ -7,6 +7,6 @@
     {
         public const string GUID = "com.kino.gorillatag.miniinmodded";
         public const string Name = "MiniInModded";
-        public const string Version = "1.0.2";
+        public const string Version = "1.0.4";
     }
 }
